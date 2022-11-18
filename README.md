@@ -1,3 +1,3 @@
 # BGGN213
 
-BioInformatics Lab Work and Stuff
+BioInformatics Lab Work and Stuff for UC San Diego
