@@ -1,0 +1,109 @@
+---
+title: "COVID-19 Variant Analysis"
+author: "Shane Desfor - PID: A59018963"
+format: html
+---
+
+## Step-By-Step
+#Read in and examine csv file.
+```{r}
+
+covid <- read.csv("covid19_variants.csv")
+head(covid)
+
+```
+
+#Going to need ggplot for this.
+```{r}
+library(ggplot2)
+```
+
+#...Realized waaay down below that this needed to change. And it needed to be here because of the way I had layered in date.
+```{r}
+covid$date <- as.Date(covid$date, format = "%Y-%m-%d")
+```
+
+
+#After much tweeking, I got a workerable plot to play with, but it needs some tuning in.
+```{r}
+covid_plot <- ggplot(covid, 
+                     aes(x=date, 
+                         y=percentage, 
+                         color=variant_name))
+covid_plot + 
+  geom_point() + 
+  labs(title = "COVID-19 Variants in California", 
+       y= "Percentage of Sequenced Specimens", 
+       color="Variant")
+```
+
+
+#First, remove the 'Total' from being plotted
+```{r}
+covid_filtered <- covid[covid$variant_name != "Total", ]
+```
+
+
+#Could not get geom_line to work, would not display any variants, going to try and group by variant, as a factor.
+```{r}
+covid_filtered$variant_name <- factor(covid_filtered$variant_name)
+```
+
+#Adjusted line plot
+```{r}
+covid_plot2 <- ggplot(covid_filtered, 
+                      aes(x = date, 
+                          y = percentage, 
+                          color = variant_name, 
+                          group = variant_name)) + 
+  geom_line()
+covid_plot2
+
+```
+#Worked! But it's a little sloppy.
+
+#Added lables and adjusted the x-axis...still needs some more tweeking though.
+```{r}
+covid_plot2 + 
+  labs(title = "COVID-19 Variants in California", 
+       x= NULL, 
+       y= "Percentage of Sequenced Specimens", 
+       color="Variant") + 
+  scale_x_date(date_labels = "%B %Y", date_breaks = "1 month") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+#Get better x-axis starting and ending points, also discovered I needed a 'breaks vector'
+```{r}
+start_date <- min(covid_filtered$date)
+end_date <- max(covid_filtered$date)
+breaks.vec <- seq(min(covid_filtered$date), 
+                  max(covid_filtered$date), by= "1 month")
+```
+
+
+##Final Product
+#This is the one!
+```{r}
+covid_plot2 + 
+  labs(title = "COVID-19 Variants in California", 
+       x= NULL, y= "Percentage of Sequenced Specimens", 
+       color="Variant") +
+  scale_x_date(breaks = breaks.vec, date_labels = "%B %y") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
