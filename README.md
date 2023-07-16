@@ -4,3 +4,4 @@
 
 - Class 10: [PCA of Candy] (https://bioboot.github.io/bggn213_F22/schedule/#10), Isn't That Neat?
 
+- Question 11: [Variant Analysis Extra Credit] 
